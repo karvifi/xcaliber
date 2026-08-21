@@ -30,8 +30,10 @@ internal engineering name to Xcaliber:
   MinGW/UCRT runtime reported `STATUS_ENTRYPOINT_NOT_FOUND`.
 - A post-rename MSVC cross-check was attempted, but the validation host does not have
   the `clang-cl` C++ frontend required by one Tauri build dependency. The repository CI
-  runs the desktop check and four command-boundary tests on GitHub's MSVC-equipped
-  Windows runner.
+  is configured to run the desktop check and four command-boundary tests on a Windows
+  MSVC runner. The first public push and one retry both failed before GitHub assigned
+  any runner; no workflow step ran and no job log was produced. That infrastructure
+  result is not counted as a test pass or a source failure.
 
 The complete MSVC desktop build, four command-boundary tests, and packaged launch smoke
 listed below were executed immediately before the public-name-only rebrand. They are

@@ -1,7 +1,6 @@
 # Xcaliber
 
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](LICENSE)
-[![CI](https://github.com/karvifi/xcaliber/actions/workflows/ci.yml/badge.svg)](https://github.com/karvifi/xcaliber/actions/workflows/ci.yml)
 
 Xcaliber is a public, local-first control plane and inference workspace for running
 very large sparse language models—currently focused on

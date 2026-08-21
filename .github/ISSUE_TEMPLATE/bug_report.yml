@@ -1,0 +1,55 @@
+name: Bug report
+description: Report a reproducible Xcaliber defect.
+title: "[Bug]: "
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: Do not attach model weights, prompts containing secrets, or API keys.
+  - type: input
+    id: version
+    attributes:
+      label: Xcaliber version
+      placeholder: "1.2.0"
+    validations:
+      required: true
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component
+      options:
+        - CLI or planner
+        - Exact Rust engine
+        - Docker or adaptive runtime
+        - Desktop app
+        - Build or release
+        - Documentation
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, CPU, RAM, GPU/driver, model-drive type/free space, Docker and Rust versions.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Reproduction
+      description: Exact commands and the smallest safe sequence that reproduces the problem.
+    validations:
+      required: true
+  - type: textarea
+    id: output
+    attributes:
+      label: Sanitized output
+      description: Include doctor output and logs after removing paths, tokens, prompts, and secrets.
+  - type: checkboxes
+    id: claims
+    attributes:
+      label: Checks
+      options:
+        - label: I verified that the model is official Kimi K3 before reporting an exact-runtime defect.
+        - label: I removed credentials and private prompt content.
+          required: true

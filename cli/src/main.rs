@@ -11,9 +11,10 @@ use std::io;
 use std::path::{Path, PathBuf};
 use std::process::{Command, ExitCode, Stdio};
 
+mod local_api;
 mod planner;
 
-const VERSION: &str = "1.1.0";
+const VERSION: &str = env!("CARGO_PKG_VERSION");
 const MODEL_REPO: &str = "moonshotai/Kimi-K3";
 const EXPECTED_SHARDS: usize = 96;
 const EXPECTED_BYTES: u64 = 1_560_936_091_448;
@@ -65,9 +66,10 @@ fn usage() {
            xcaliber plan [--model-dir PATH] [--measure-io] [--benchmark-file PATH] [--json]\n\
            xcaliber pull --destination PATH [--revision SHA] [--workers N] [--skip-checksum]\n\
            xcaliber pack --model-dir PATH --destination PATH\n\
-           xcaliber run --model-dir PATH --trunk PATH [engine options]\n\n\
+           xcaliber run --model-dir PATH --trunk PATH [engine options]\n\
+           xcaliber chat --prompt TEXT [--api-url URL] [--model NAME] [--api-key KEY] [--max-tokens N] [--json]\n\n\
          No Moonshot/Kimi API key is used. Model weights remain on the selected drive.\n\
-         `run` is the native CPU reference. Docker supplies multi-turn chat and a local API."
+         `run` is the native CPU reference. `chat` accepts loopback HTTP only."
     );
 }
 
@@ -872,6 +874,7 @@ fn run() -> Result<i32, String> {
         "pull" => pull(&rest),
         "pack" => pack(&rest),
         "run" => run_native(&rest),
+        "chat" => local_api::run(&rest),
         other => Err(format!("unknown command: {other}")),
     }
 }

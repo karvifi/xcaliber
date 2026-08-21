@@ -1,6 +1,10 @@
 # Xcaliber
 
-[![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](LICENSE)
+![Xcaliber — run what fits, know what does not](assets/brand/xcaliber-readme.svg)
+
+[![Release](https://img.shields.io/github/v/release/karvifi/xcaliber?display_name=tag)](https://github.com/karvifi/xcaliber/releases/latest)
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-b9ff66.svg)](LICENSE)
+[![Container](https://img.shields.io/badge/GHCR-xcaliber-5de4ff.svg)](https://github.com/karvifi/xcaliber/pkgs/container/xcaliber)
 
 Xcaliber is a public, local-first control plane and inference workspace for running
 very large sparse language models—currently focused on
@@ -11,6 +15,11 @@ Docker/Colibri runtime, and an original Tauri desktop controller.
 Xcaliber uses model files on your own storage. It does **not** call Moonshot's hosted
 inference API, does not require a Kimi API key, and does not upload prompts. Model
 weights are not included in this repository.
+
+![Xcaliber desktop overview using deterministic preview data](assets/screenshots/xcaliber-overview.png)
+
+The screenshot uses deterministic preview hardware data; it is an interface view, not
+a full-model benchmark or certification result.
 
 ## Read this before downloading Kimi K3
 
@@ -53,6 +62,23 @@ See [VALIDATION.md](VALIDATION.md) for executed evidence and
 [RELEASE_GATES.md](docs/RELEASE_GATES.md) for gates that remain hardware- or
 checkpoint-dependent.
 
+## Download and verify
+
+The [latest release](https://github.com/karvifi/xcaliber/releases/latest) is the only
+supported download page. Release automation produces:
+
+| File | Purpose |
+|---|---|
+| Xcaliber-1.2.0-windows-x64-cli.zip | Primary portable Windows CLI, exact engine, trunk tool, release Compose file, licenses, and evidence |
+| Xcaliber_*_x64-setup.exe | Windows desktop and bundled CLI resources, produced by the NSIS release job |
+| SHA256SUMS.txt | SHA-256 values for every attached artifact |
+
+Xcaliber release executables are not code-signed until the project has a protected
+signing certificate. Verify the SHA-256 file and the GitHub build provenance before
+running a download. Do not obtain binaries from reposting sites.
+
+The source tree remains usable if a hosted release runner has not produced an artifact.
+
 ## Execution modes
 
 Xcaliber keeps four fundamentally different outcomes explicit:
@@ -80,6 +106,29 @@ cd xcaliber
 
 Do not clone model weights into this Git repository. Put them on a dedicated fast
 drive and pass that location to Xcaliber.
+
+## First run on a normal computer
+
+Check the machine before downloading anything:
+
+```powershell
+xcaliber.exe requirements
+xcaliber.exe plan
+```
+
+If the planner recommends smaller-surrogate, start a separately licensed local
+OpenAI-compatible model server and chat with it through loopback:
+
+```powershell
+xcaliber.exe chat `
+  --api-url http://127.0.0.1:8000 `
+  --model local-model `
+  --prompt "Explain sparse mixture-of-experts routing."
+```
+
+This is the storage-conscious interactive route. Xcaliber does not download a model
+behind your back and does not call a hosted Kimi API. A smaller model is never labeled
+as official Kimi K3.
 
 ## Windows CLI
 
@@ -148,6 +197,15 @@ drafting. Environment overrides are `XCALIBER_ENGINE` and `XCALIBER_PACK_TOOL`.
 Docker provides the persistent Colibri engine and a local OpenAI-compatible endpoint.
 It still requires the complete K3 checkpoint.
 
+The versioned public image is:
+
+```text
+ghcr.io/karvifi/xcaliber:1.2.0
+```
+
+Use docker/compose.release.yaml to pull the public image, or docker/compose.yaml to
+build it from the pinned source in this repository.
+
 ```powershell
 $env:MODEL_DIR = 'E:\Models\Kimi-K3'
 $env:K3_LOCAL_API_KEY = 'replace-this-local-password'
@@ -202,6 +260,12 @@ Build on Windows with Rust's MSVC target, Microsoft C++ Build Tools, and WebView
 .\scripts\build-app.ps1
 ```
 
+Build the NSIS installer after installing Tauri CLI 2:
+
+```powershell
+.\scripts\build-installer.ps1
+```
+
 Keep the generated `Xcaliber.exe`, `xcaliber.exe`, `xcaliber-engine.exe`, and bundled
 `docker` and `runtime` directories together. The app can:
 
@@ -219,6 +283,7 @@ build.
 
 ```text
 app/                 Tauri desktop controller and static UI
+assets/              Original Xcaliber logo, icons, banner, and artwork
 cli/                 Rust planner, doctor, model puller, packer, and launcher
 docker/              Local adaptive service image and Compose definition
 docs/                Architecture, research, ADRs, and release gates
@@ -248,9 +313,11 @@ cargo check --manifest-path app\src-tauri\Cargo.toml --locked
 cargo test --manifest-path app\src-tauri\Cargo.toml --locked
 ```
 
-`scripts/audit.ps1` verifies the 96-shard byte total, Docker safety defaults, absence
+`scripts/audit.ps1` verifies the 96-shard byte total, Docker safety defaults, release
+container shape, version alignment, brand assets, installer resources, absence
 of hosted-Kimi credentials, desktop command boundaries, Cargo target shape, Win32 FFI
-shape, licensing metadata, unfinished Rust macros, and accidental large files.
+shape, licensing metadata, public-repository files, unfinished Rust macros, and
+accidental large files.
 
 Tests that need the official checkpoint are deliberately ignored unless their model
 path guard is satisfied. A green weightless test suite is not a full-model
@@ -264,7 +331,8 @@ certification.
 - Pulls use a pinned model revision and published checksums.
 - Model weights, prompts, caches, and environment files are excluded from Git.
 
-See [SECURITY.md](SECURITY.md) for vulnerability reporting.
+See [SECURITY.md](SECURITY.md) for vulnerability reporting and
+[SUPPORT.md](SUPPORT.md) for the diagnostic checklist.
 
 ## Contributing
 
@@ -272,6 +340,10 @@ Issues and pull requests are welcome, especially for reproducible hardware evide
 storage scheduling, exactness tests, Vulkan parity, safer model management, and the
 future heterogeneous-worker protocol. Read [CONTRIBUTING.md](CONTRIBUTING.md) before
 submitting changes.
+
+Public release state is tracked in [CHANGELOG.md](CHANGELOG.md),
+[PRODUCT-READINESS.md](docs/PRODUCT-READINESS.md), and
+[CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
 
 Do not remove evidence gates or describe an adaptive/surrogate result as official K3.
 Performance contributions should include the model revision, prompt/token counts,

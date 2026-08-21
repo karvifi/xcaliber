@@ -4,6 +4,7 @@ on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -17,7 +18,7 @@ jobs:
     name: Core and release audits
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
@@ -32,6 +33,19 @@ jobs:
       - name: Release audit
         shell: pwsh
         run: ./scripts/audit.ps1
+      - name: PowerShell syntax
+        shell: pwsh
+        run: |
+          $errors = $null
+          Get-ChildItem scripts -Filter '*.ps1' | ForEach-Object {
+            [void][System.Management.Automation.Language.Parser]::ParseFile($_.FullName, [ref]$null, [ref]$errors)
+            if ($errors) { throw ($errors | Out-String) }
+          }
+      - name: JSON configuration syntax
+        shell: pwsh
+        run: |
+          Get-Content app/src-tauri/tauri.conf.json -Raw | ConvertFrom-Json | Out-Null
+          Get-Content app/src-tauri/tauri.release.conf.json -Raw | ConvertFrom-Json | Out-Null
       - name: Desktop JavaScript syntax
         run: node --check app/ui/app.js
 
@@ -39,9 +53,11 @@ jobs:
     name: Tauri command boundary
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: dtolnay/rust-toolchain@stable
       - name: Desktop check
         run: cargo check --manifest-path app/src-tauri/Cargo.toml --locked
+      - name: Desktop lint
+        run: cargo clippy --manifest-path app/src-tauri/Cargo.toml --all-targets --locked -- -D warnings
       - name: Desktop tests
         run: cargo test --manifest-path app/src-tauri/Cargo.toml --locked

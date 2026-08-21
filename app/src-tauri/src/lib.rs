@@ -6,6 +6,8 @@ use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
 use std::sync::atomic::{AtomicU32, Ordering};
 use std::sync::Arc;
+use tauri::path::BaseDirectory;
+use tauri::Manager;
 
 const MAX_CAPTURE_BYTES: usize = 2 * 1024 * 1024;
 
@@ -76,11 +78,31 @@ fn command_available(name: &str) -> bool {
         .unwrap_or(false)
 }
 
-fn cli_path() -> Option<PathBuf> {
+fn bundled_resource(app: Option<&tauri::AppHandle>, relative: &str) -> Option<PathBuf> {
+    app.and_then(|handle| {
+        handle
+            .path()
+            .resolve(relative, BaseDirectory::Resource)
+            .ok()
+    })
+    .filter(|candidate| candidate.is_file())
+}
+
+fn cli_path(app: Option<&tauri::AppHandle>) -> Option<PathBuf> {
     if let Some(path) = env::var_os("XCALIBER_CLI").map(PathBuf::from) {
         if path.is_file() {
             return Some(path);
         }
+    }
+    if let Some(path) = bundled_resource(
+        app,
+        if cfg!(windows) {
+            "runtime/xcaliber.exe"
+        } else {
+            "runtime/xcaliber"
+        },
+    ) {
+        return Some(path);
     }
     let executable = env::current_exe().ok()?;
     let directory = executable.parent()?;
@@ -95,7 +117,10 @@ fn cli_path() -> Option<PathBuf> {
         .find(|candidate| candidate.is_file())
 }
 
-fn compose_path() -> Option<PathBuf> {
+fn compose_path(app: Option<&tauri::AppHandle>) -> Option<PathBuf> {
+    if let Some(path) = bundled_resource(app, "docker/compose.yaml") {
+        return Some(path);
+    }
     let executable = env::current_exe().ok()?;
     let directory = executable.parent()?;
     [
@@ -205,7 +230,7 @@ fn build_docker_arguments(action: &str, compose: &Path) -> Result<Vec<String>, S
         compose.display().to_string(),
     ];
     match action {
-        "docker_start" => args.extend(["up", "-d", "--build"].map(str::to_string)),
+        "docker_start" => args.extend(["up", "-d"].map(str::to_string)),
         "docker_stop" => args.extend(["down"].map(str::to_string)),
         "docker_status" => args.extend(["ps"].map(str::to_string)),
         "docker_logs" => args.extend(["logs", "--tail", "200"].map(str::to_string)),
@@ -225,8 +250,8 @@ fn bounded_text(bytes: &[u8]) -> String {
 }
 
 #[tauri::command]
-fn runtime_info(state: tauri::State<'_, AppState>) -> RuntimeInfo {
-    let cli = cli_path();
+fn runtime_info(app: tauri::AppHandle, state: tauri::State<'_, AppState>) -> RuntimeInfo {
+    let cli = cli_path(Some(&app));
     RuntimeInfo {
         app_version: env!("CARGO_PKG_VERSION"),
         cli_path: cli
@@ -242,6 +267,7 @@ fn runtime_info(state: tauri::State<'_, AppState>) -> RuntimeInfo {
 
 #[tauri::command]
 async fn execute(
+    app: tauri::AppHandle,
     request: OperationRequest,
     state: tauri::State<'_, AppState>,
 ) -> Result<OperationResult, String> {
@@ -250,7 +276,7 @@ async fn execute(
         if !command_available("docker") {
             return Err("Docker is not installed or is not running".to_string());
         }
-        let compose = compose_path().ok_or(
+        let compose = compose_path(Some(&app)).ok_or(
             "docker/compose.yaml was not found next to the app. Keep the portable folder intact.",
         )?;
         let model = nonempty(request.model_dir.clone(), "official model directory")?;
@@ -261,7 +287,7 @@ async fn execute(
         )
     } else {
         (
-            cli_path()
+            cli_path(Some(&app))
                 .ok_or("xcaliber CLI was not found. Keep xcaliber.exe next to this app or set XCALIBER_CLI.")?,
             build_arguments(&request)?,
             None,
@@ -384,7 +410,7 @@ mod tests {
             .expect("start is allowed");
         assert_eq!(
             args,
-            ["compose", "-f", "compose.yaml", "up", "-d", "--build"]
+            ["compose", "-f", "compose.yaml", "up", "-d"]
         );
         assert!(build_docker_arguments("docker_exec", Path::new("compose.yaml")).is_err());
     }

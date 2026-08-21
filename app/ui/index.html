@@ -8,10 +8,14 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
+    <a class="skip-link" href="#workspace">Skip to workspace</a>
     <div class="shell">
       <aside class="sidebar">
-        <div class="brand"><span class="mark">K3</span><span>W Local</span></div>
-        <p class="brand-sub">One runtime. Your hardware. No hosted Kimi API.</p>
+        <div class="brand">
+          <img src="assets/xcaliber-mark.svg" alt="" width="42" height="42" />
+          <span><strong>XCALIBER</strong><small>LOCAL SYSTEMS</small></span>
+        </div>
+        <p class="brand-sub">Run what fits. Know what doesn’t. No hosted Kimi API.</p>
         <nav aria-label="Application sections">
           <button class="nav active" data-view="overview">Overview</button>
           <button class="nav" data-view="setup">Model setup</button>
@@ -20,17 +24,30 @@
         </nav>
         <div class="runtime-card">
           <span id="runtime-dot" class="status-dot"></span>
-          <div><strong id="runtime-label">Checking runtime…</strong><small id="runtime-path"></small></div>
+          <div><strong id="runtime-label">Checking runtime…</strong><small id="runtime-path"></small><small id="app-version"></small></div>
         </div>
       </aside>
 
-      <main>
+      <main id="workspace">
         <header>
           <div><p class="eyebrow">Adaptive local inference</p><h1 id="view-title">System overview</h1></div>
           <div class="header-actions"><button id="cancel" class="button ghost">Cancel task</button><button id="refresh" class="button primary">Refresh plan</button></div>
         </header>
 
         <section id="overview" class="view active">
+          <div id="onboarding" class="onboarding panel">
+            <div>
+              <p class="eyebrow">First run</p>
+              <h2>Start with this computer, not a promise.</h2>
+              <p>Xcaliber checks capacity first. If full K3 does not fit, connect a smaller local OpenAI-compatible model and use the same private chat interface.</p>
+            </div>
+            <ol>
+              <li><strong>Measure</strong><span>Inspect RAM, GPU, storage, and Docker.</span></li>
+              <li><strong>Choose</strong><span>Exact K3, adaptive K3, or a practical smaller model.</span></li>
+              <li><strong>Run locally</strong><span>Keep model files and prompts on this machine.</span></li>
+            </ol>
+            <div class="button-row"><button id="onboarding-check" class="button primary">Check this computer</button><button id="onboarding-chat" class="button">Connect a local model</button><button id="onboarding-close" class="button ghost" aria-label="Dismiss first-run guide">Dismiss</button></div>
+          </div>
           <div class="hero panel">
             <div><span class="pill safe">LOCAL ONLY</span><h2>A planner that separates “runs” from “runs well.”</h2><p>Xcaliber measures capacity and bandwidth, selects an honest execution mode, and refuses impossible downloads before touching the network.</p></div>
             <div class="hero-number"><strong>2.8T</strong><span>total parameters</span><strong>104B</strong><span>active per token</span></div>
@@ -63,15 +80,19 @@
               <div class="warning"><strong>Nothing is hidden:</strong> the official checkpoint stays outside the application and under its own model license.</div>
             </div>
           </div>
+          <div class="panel practical-path">
+            <div><p class="eyebrow">Ordinary computer path</p><h2>Use a smaller local model without pretending it is K3.</h2><p class="muted">Start any local OpenAI-compatible server you trust, then enter its loopback URL and model name in Local chat. No Moonshot API key is needed.</p></div>
+            <button id="open-local-chat" class="button primary">Open local chat</button>
+          </div>
           <div class="panel output-panel"><div class="panel-title"><h3>Operation output</h3><span id="setup-state">Idle</span></div><pre id="setup-output">No operation has run.</pre></div>
         </section>
 
         <section id="chat" class="view">
           <div class="chat-layout">
             <div class="panel chat-panel">
-              <div class="panel-title"><div><h2>Loopback chat</h2><p>Connects only to the local Docker/Colibri API.</p></div><span id="api-state" class="pill">OFFLINE</span></div>
-              <div id="messages" class="messages"><div class="empty-chat">Start Docker from the source release, then send a message here.</div></div>
-              <form id="chat-form"><textarea id="chat-input" rows="3" placeholder="Message local K3…"></textarea><button class="button primary" type="submit">Send</button></form>
+              <div class="panel-title"><div><h2>Loopback chat</h2><p>Connects only to a local OpenAI-compatible API.</p></div><span id="api-state" class="pill">OFFLINE</span></div>
+              <div id="messages" class="messages"><div class="empty-chat">Start Xcaliber Docker for K3, or connect another local OpenAI-compatible model.</div></div>
+              <form id="chat-form"><label class="sr-only" for="chat-input">Message</label><textarea id="chat-input" rows="3" placeholder="Message your local model…"></textarea><button class="button primary" type="submit">Send</button></form>
             </div>
             <div class="panel form-panel chat-settings">
               <h3>Connection</h3>
@@ -82,7 +103,7 @@
               <button id="probe-api" class="button">Test connection</button>
               <div class="button-row"><button id="docker-start" class="button primary">Start local service</button><button id="docker-stop" class="button">Stop service</button></div>
               <div class="button-row"><button id="docker-status" class="button">Service status</button><button id="docker-logs" class="button">Recent logs</button></div>
-              <p class="muted">Starting the service builds the local image on first use. It requires the complete model directory above.</p>
+              <p class="muted">The service buttons control Xcaliber's K3 Docker stack and require the complete model directory. The connection fields can also target a smaller local model.</p>
               <hr />
               <h3>Exact one-shot engine</h3>
               <label>Maximum output tokens<input id="max-tokens" type="number" value="32" min="1" max="4096" /></label>

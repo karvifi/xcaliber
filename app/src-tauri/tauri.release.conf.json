@@ -1,0 +1,23 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "bundle": {
+    "active": true,
+    "targets": ["nsis"],
+    "publisher": "Xcaliber Project",
+    "resources": {
+      "../../dist/windows-cli/xcaliber.exe": "runtime/xcaliber.exe",
+      "../../dist/windows-cli/xcaliber-engine.exe": "runtime/xcaliber-engine.exe",
+      "../../dist/windows-cli/tools/pack_trunk.py": "runtime/tools/pack_trunk.py",
+      "../../docker/compose.release.yaml": "docker/compose.yaml",
+      "../../LICENSE": "licenses/LICENSE",
+      "../../NOTICE": "licenses/NOTICE",
+      "../../VALIDATION.md": "docs/VALIDATION.md"
+    },
+    "windows": {
+      "nsis": {
+        "displayLanguageSelector": false,
+        "installMode": "currentUser"
+      }
+    }
+  }
+}

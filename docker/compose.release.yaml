@@ -1,10 +1,5 @@
 services:
   xcaliber:
-    build:
-      context: ..
-      dockerfile: docker/Dockerfile
-      args:
-        ARCH: "${K3_ARCH:-x86-64-v3}"
     image: ghcr.io/karvifi/xcaliber:1.2.0
     init: true
     ports:

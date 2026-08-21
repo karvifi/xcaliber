@@ -1,7 +1,7 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "Xcaliber",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "identifier": "dev.xcaliber.desktop",
   "build": {
     "frontendDist": "../ui"
@@ -26,8 +26,15 @@
   },
   "bundle": {
     "active": false,
-    "icon": [],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.ico"
+    ],
     "category": "DeveloperTool",
-    "shortDescription": "Local Kimi K3 runtime controller"
+    "shortDescription": "Local Kimi K3 runtime controller",
+    "longDescription": "Measure the host, choose an honest local execution mode, manage Kimi K3 model files, and connect to a loopback OpenAI-compatible runtime.",
+    "copyright": "Copyright © 2026 Xcaliber contributors"
   }
 }

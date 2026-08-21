@@ -11,6 +11,13 @@ COPY runtime/colibri/c/ ./c/
 RUN make -C c kimi_k3 ARCH="${ARCH}" VK=1
 
 FROM debian:bookworm-slim
+ARG XCALIBER_VERSION=1.2.0
+LABEL org.opencontainers.image.title="Xcaliber" \
+      org.opencontainers.image.description="Local adaptive Kimi K3 runtime" \
+      org.opencontainers.image.url="https://github.com/karvifi/xcaliber" \
+      org.opencontainers.image.source="https://github.com/karvifi/xcaliber" \
+      org.opencontainers.image.version="${XCALIBER_VERSION}" \
+      org.opencontainers.image.licenses="AGPL-3.0-only"
 RUN apt-get update && \
     apt-get install -y --no-install-recommends python3 libgomp1 libvulkan1 ca-certificates && \
     rm -rf /var/lib/apt/lists/* && \

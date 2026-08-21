@@ -1,0 +1,35 @@
+name: Feature request
+description: Propose a measurable product or engineering improvement.
+title: "[Feature]: "
+labels: ["enhancement", "needs-triage"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What user or hardware limitation needs to be solved?
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Desired outcome
+      description: Describe observable behavior and how it should be measured.
+    validations:
+      required: true
+  - type: dropdown
+    id: semantics
+    attributes:
+      label: Required model semantics
+      options:
+        - Must preserve official Kimi K3 semantics
+        - Adaptive or quantized behavior is acceptable
+        - Smaller surrogate model is acceptable
+        - Not model-specific
+    validations:
+      required: true
+  - type: textarea
+    id: hardware
+    attributes:
+      label: Target hardware
+      description: Include CPU, RAM, GPU/VRAM, storage, operating system, and network where relevant.

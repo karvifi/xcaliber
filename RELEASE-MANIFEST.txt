@@ -1,4 +1,4 @@
-Xcaliber 1.1.0 (engineering release v46)
+Xcaliber 1.2.0
 
 Repository contents:
 
@@ -8,11 +8,14 @@ Repository contents:
 - Hardware and performance planner
 - Model pull, verification, trunk packing, native execution, and local chat wiring
 - Source licenses, third-party notices, checksum tools, and validation evidence
+- Original logo, application icons, repository banner, and brand artwork
+- Automated Windows/NSIS and GHCR container release workflows
 
 Generated Windows release layout (build artifacts are not committed to Git):
 
 - Windows CLI: xcaliber.exe
 - Exact native engine: xcaliber-engine.exe
 - Windows desktop: Xcaliber.exe
+- Windows installer: Xcaliber_*_x64-setup.exe
 
 Model weights are intentionally not included.

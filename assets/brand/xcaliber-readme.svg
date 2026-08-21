@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 360" role="img" aria-labelledby="title desc">
+  <title id="title">Xcaliber — run what fits, know what does not</title>
+  <desc id="desc">Xcaliber local AI product banner with calibrated X mark and sparse routing lines.</desc>
+  <defs>
+    <linearGradient id="surface" x1="78" y1="24" x2="1192" y2="338" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#11191D"/><stop offset=".52" stop-color="#080B0D"/><stop offset="1" stop-color="#0B1216"/>
+    </linearGradient>
+    <radialGradient id="halo" cx="0" cy="0" r="1" gradientTransform="translate(980 155) rotate(144) scale(520 310)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#17353A" stop-opacity=".72"/><stop offset="1" stop-color="#080B0D" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1280" height="360" rx="28" fill="url(#surface)"/>
+  <rect x="1" y="1" width="1278" height="358" rx="27" fill="none" stroke="#253139" stroke-width="2"/>
+  <path d="M0 72H1280M0 144H1280M0 216H1280M0 288H1280M128 0V360M256 0V360M384 0V360M512 0V360M640 0V360M768 0V360M896 0V360M1024 0V360M1152 0V360" stroke="#162126" stroke-width="1"/>
+  <rect width="1280" height="360" rx="28" fill="url(#halo)"/>
+  <g transform="translate(72 50)">
+    <path d="M49 44L128 128L49 212" fill="none" stroke="#B9FF66" stroke-width="20" stroke-linecap="square" stroke-linejoin="miter"/>
+    <path d="M207 44L128 128L207 212" fill="none" stroke="#5DE4FF" stroke-width="20" stroke-linecap="square" stroke-linejoin="miter"/>
+    <path d="M49 44L128 128L49 212M207 44L128 128L207 212" fill="none" stroke="#E8F2F5" stroke-opacity=".3" stroke-width="2"/>
+    <rect x="119" y="119" width="18" height="18" transform="rotate(45 128 128)" fill="#080B0D" stroke="#9BEAF0" stroke-opacity=".7" stroke-width="2"/>
+  </g>
+  <g fill="none" stroke="#426069" stroke-width="2">
+    <path d="M306 178H365"/><path d="M1010 178H1205"/><path d="M1040 114L1104 178L1040 242"/>
+  </g>
+  <g fill="#5DE4FF"><circle cx="365" cy="178" r="4"/><circle cx="1010" cy="178" r="4"/><circle cx="1104" cy="178" r="4"/><circle cx="1205" cy="178" r="4"/></g>
+  <text x="372" y="159" fill="#F1F7F8" font-family="Segoe UI, Inter, Arial, sans-serif" font-size="70" font-weight="750" letter-spacing="8">XCALIBER</text>
+  <text x="378" y="211" fill="#A6B6BC" font-family="Segoe UI, Inter, Arial, sans-serif" font-size="23" font-weight="620" letter-spacing="2">RUN WHAT FITS. KNOW WHAT DOESN’T.</text>
+  <text x="381" y="251" fill="#6F838B" font-family="Segoe UI, Inter, Arial, sans-serif" font-size="16" letter-spacing="1">LOCAL-FIRST CONTROL PLANE FOR VERY LARGE SPARSE MODELS</text>
+</svg>

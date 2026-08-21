@@ -37,6 +37,20 @@ document.querySelectorAll(".nav").forEach((button) => {
   });
 });
 
+function openView(view) {
+  const button = document.querySelector(`.nav[data-view="${view}"]`);
+  if (button) button.click();
+}
+
+const onboarding = $("onboarding");
+onboarding.hidden = localStorage.getItem("xcaliber:onboarding-dismissed") === "1";
+$("onboarding-close").addEventListener("click", () => {
+  localStorage.setItem("xcaliber:onboarding-dismissed", "1");
+  onboarding.hidden = true;
+});
+$("onboarding-chat").addEventListener("click", () => openView("chat"));
+$("open-local-chat").addEventListener("click", () => openView("chat"));
+
 function request(action, overrides = {}) {
   return {
     action,
@@ -107,6 +121,8 @@ async function refreshPlan() {
   }
 }
 
+$("onboarding-check").addEventListener("click", refreshPlan);
+
 async function refreshRuntime() {
   if (!invoke) {
     $("runtime-label").textContent = "Browser preview only";
@@ -117,6 +133,7 @@ async function refreshRuntime() {
     const info = await invoke("runtime_info");
     $("runtime-label").textContent = info.cliAvailable ? "CLI connected" : "CLI missing";
     $("runtime-path").textContent = info.cliPath || "Place xcaliber.exe next to the app";
+    $("app-version").textContent = `Xcaliber ${info.appVersion}`;
     $("runtime-dot").classList.toggle("ready", info.cliAvailable);
   } catch (error) {
     $("runtime-label").textContent = "Runtime error";

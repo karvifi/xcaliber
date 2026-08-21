@@ -15,12 +15,19 @@ $excludedDirectories = if ($IncludeBuildArtifacts) {
 } else {
     @('.git', 'build', 'dist', 'target', '__pycache__', '.pytest_cache')
 }
-$files = Get-ChildItem -LiteralPath $ProjectRoot -File -Recurse | Where-Object {
-    if ($_.FullName -eq $manifest -or $_.Extension -eq '.pyc') { return $false }
-    $relative = [IO.Path]::GetRelativePath($ProjectRoot, $_.FullName)
-    $parts = $relative -split '[\\/]'
-    -not ($parts | Where-Object { $_ -in $excludedDirectories })
-} | Sort-Object FullName
+function Get-ManifestFiles([string]$Directory) {
+    foreach ($item in Get-ChildItem -LiteralPath $Directory -Force) {
+        if ($item.PSIsContainer) {
+            if ($item.Name -notin $excludedDirectories) {
+                Get-ManifestFiles $item.FullName
+            }
+        }
+        elseif ($item.FullName -ne $manifest -and $item.Extension -ne '.pyc') {
+            $item
+        }
+    }
+}
+$files = @(Get-ManifestFiles $ProjectRoot) | Sort-Object FullName
 
 $lines = foreach ($file in $files) {
     $relative = [IO.Path]::GetRelativePath($ProjectRoot, $file.FullName).Replace('\', '/')

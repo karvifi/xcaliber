@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+  <title id="title">Xcaliber mark</title>
+  <desc id="desc">A calibrated X joining lime and cyan rails over a graphite field.</desc>
+  <defs>
+    <linearGradient id="bg" x1="24" y1="16" x2="232" y2="240" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#12191D"/>
+      <stop offset="1" stop-color="#070A0C"/>
+    </linearGradient>
+    <linearGradient id="lime" x1="42" y1="46" x2="139" y2="212" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#D5FF86"/>
+      <stop offset="1" stop-color="#8DE33F"/>
+    </linearGradient>
+    <linearGradient id="cyan" x1="116" y1="44" x2="218" y2="211" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7DF1FF"/>
+      <stop offset="1" stop-color="#24BFD8"/>
+    </linearGradient>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect x="5" y="5" width="246" height="246" rx="54" fill="url(#bg)" stroke="#263239" stroke-width="10"/>
+  <path d="M31 82H225M31 128H225M31 174H225M82 31V225M128 31V225M174 31V225" stroke="#1A252A" stroke-width="2"/>
+  <circle cx="31" cy="128" r="4" fill="#B9FF66"/>
+  <circle cx="225" cy="128" r="4" fill="#5DE4FF"/>
+  <g opacity=".28" filter="url(#glow)">
+    <path d="M49 44L128 128L49 212" fill="none" stroke="#B9FF66" stroke-width="26" stroke-linecap="square" stroke-linejoin="miter"/>
+    <path d="M207 44L128 128L207 212" fill="none" stroke="#5DE4FF" stroke-width="26" stroke-linecap="square" stroke-linejoin="miter"/>
+  </g>
+  <path d="M49 44L128 128L49 212" fill="none" stroke="url(#lime)" stroke-width="20" stroke-linecap="square" stroke-linejoin="miter"/>
+  <path d="M207 44L128 128L207 212" fill="none" stroke="url(#cyan)" stroke-width="20" stroke-linecap="square" stroke-linejoin="miter"/>
+  <path d="M49 44L128 128L49 212M207 44L128 128L207 212" fill="none" stroke="#E8F2F5" stroke-opacity=".28" stroke-width="2"/>
+  <path d="M63 62L70 55M77 77L84 70M178 70L185 77M192 55L199 62M63 194L70 201M77 179L84 186M178 186L185 179M192 201L199 194" stroke="#071013" stroke-width="4"/>
+  <rect x="119" y="119" width="18" height="18" transform="rotate(45 128 128)" fill="#0A0F12" stroke="#9BEAF0" stroke-opacity=".55" stroke-width="2"/>
+</svg>

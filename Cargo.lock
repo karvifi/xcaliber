@@ -40,15 +40,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682"
 
 [[package]]
-name = "xcaliber-cli"
-version = "1.1.0"
-dependencies = [
- "libc",
- "serde",
- "serde_json",
-]
-
-[[package]]
 name = "kimi-k3"
 version = "1.0.0"
 dependencies = [
@@ -167,6 +158,15 @@ name = "unicode-ident"
 version = "1.0.24"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e6e4313cd5fcd3dad5cafa179702e2b244f760991f45397d14d4ebf38247da75"
+
+[[package]]
+name = "xcaliber-cli"
+version = "1.2.0"
+dependencies = [
+ "libc",
+ "serde",
+ "serde_json",
+]
 
 [[package]]
 name = "zmij"

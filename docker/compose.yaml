@@ -1,0 +1,50 @@
+services:
+  xcaliber:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      args:
+        ARCH: "${K3_ARCH:-x86-64-v3}"
+    image: xcaliber-kimi-k3-local:1.1.0
+    init: true
+    ports:
+      - "127.0.0.1:${K3_PORT:-8000}:8000"
+    volumes:
+      - "${MODEL_DIR:?Set MODEL_DIR to the complete Kimi K3 checkpoint}:/model:ro"
+    environment:
+      K3_BITS: "${K3_BITS:-4}"
+      K3_MLA_BITS: "${K3_MLA_BITS:-8}"
+      K3_HEAD_BITS: "${K3_HEAD_BITS:-8}"
+      K3_DIRECT: "${K3_DIRECT:-1}"
+      K3_PIPE: "${K3_PIPE:-1}"
+      K3_LOAD_THREADS: "${K3_LOAD_THREADS:-4}"
+      K3_IDOT: "${K3_IDOT:-1}"
+      K3_CHUNK: "${K3_CHUNK:-32}"
+      K3_VK: "${K3_VK:-0}"
+      K3_VK_GB: "${K3_VK_GB:-0}"
+      K3_TOPP: "${K3_TOPP:-0}"
+      COLI_POLICY: "${K3_POLICY:-quality}"
+      COLI_TEMP: "${K3_TEMPERATURE:-0}"
+      COLI_API_KEY: "${K3_LOCAL_API_KEY:-xcaliber-local}"
+    command:
+      - serve
+      - --model
+      - /model
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8000"
+      - --model-id
+      - kimi-k3-local
+      - --auto-tier
+      - --policy
+      - "${K3_POLICY:-quality}"
+    restart: unless-stopped
+    stop_grace_period: 30s
+    shm_size: "2gb"
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=5)"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 90m

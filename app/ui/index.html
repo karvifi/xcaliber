@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark" />
+    <title>Xcaliber</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="sidebar">
+        <div class="brand"><span class="mark">K3</span><span>W Local</span></div>
+        <p class="brand-sub">One runtime. Your hardware. No hosted Kimi API.</p>
+        <nav aria-label="Application sections">
+          <button class="nav active" data-view="overview">Overview</button>
+          <button class="nav" data-view="setup">Model setup</button>
+          <button class="nav" data-view="chat">Local chat</button>
+          <button class="nav" data-view="limits">Performance truth</button>
+        </nav>
+        <div class="runtime-card">
+          <span id="runtime-dot" class="status-dot"></span>
+          <div><strong id="runtime-label">Checking runtime…</strong><small id="runtime-path"></small></div>
+        </div>
+      </aside>
+
+      <main>
+        <header>
+          <div><p class="eyebrow">Adaptive local inference</p><h1 id="view-title">System overview</h1></div>
+          <div class="header-actions"><button id="cancel" class="button ghost">Cancel task</button><button id="refresh" class="button primary">Refresh plan</button></div>
+        </header>
+
+        <section id="overview" class="view active">
+          <div class="hero panel">
+            <div><span class="pill safe">LOCAL ONLY</span><h2>A planner that separates “runs” from “runs well.”</h2><p>Xcaliber measures capacity and bandwidth, selects an honest execution mode, and refuses impossible downloads before touching the network.</p></div>
+            <div class="hero-number"><strong>2.8T</strong><span>total parameters</span><strong>104B</strong><span>active per token</span></div>
+          </div>
+          <div class="stat-grid">
+            <article class="panel stat"><span>RAM</span><strong id="ram-stat">—</strong><small id="ram-available">Waiting for plan</small></article>
+            <article class="panel stat"><span>GPU</span><strong id="gpu-stat">—</strong><small id="gpu-detail">Optional acceleration</small></article>
+            <article class="panel stat"><span>Model drive</span><strong id="disk-stat">—</strong><small>1.70 TB practical target</small></article>
+            <article class="panel stat"><span>Recommended</span><strong id="mode-stat">—</strong><small id="mode-detail">Hardware-aware</small></article>
+          </div>
+          <div id="mode-grid" class="mode-grid"></div>
+          <div class="panel output-panel"><div class="panel-title"><h3>Readiness</h3><span id="task-state">Idle</span></div><pre id="overview-output">Refresh the plan to inspect this system.</pre></div>
+        </section>
+
+        <section id="setup" class="view">
+          <div class="two-column">
+            <div class="panel form-panel">
+              <h2>Model and trunk</h2>
+              <label>Official model directory<input id="model-dir" placeholder="E:\\Models\\Kimi-K3" /></label>
+              <label>Packed exact trunk directory<input id="trunk-dir" placeholder="E:\\Models\\Kimi-K3-trunk" /></label>
+              <label>Optional I/O benchmark file<input id="benchmark-file" placeholder="A large file on the target model drive" /></label>
+              <label class="check"><input id="measure-io" type="checkbox" /><span>Measure a 512 MB buffered sequential read</span></label>
+              <div class="button-row"><button id="doctor" class="button">Run doctor</button><button id="plan" class="button primary">Build plan</button></div>
+            </div>
+            <div class="panel form-panel">
+              <h2>Long operations</h2>
+              <p class="muted">Pull is resumable and verifies all 96 shards. It will not start unless the selected drive has enough free space.</p>
+              <label>Download or packed-trunk destination<input id="destination" placeholder="E:\\Models\\Kimi-K3" /></label>
+              <div class="button-row"><button id="pull" class="button danger">Pull 1.56 TB model</button><button id="pack" class="button">Pack 109 GB trunk</button></div>
+              <div class="warning"><strong>Nothing is hidden:</strong> the official checkpoint stays outside the application and under its own model license.</div>
+            </div>
+          </div>
+          <div class="panel output-panel"><div class="panel-title"><h3>Operation output</h3><span id="setup-state">Idle</span></div><pre id="setup-output">No operation has run.</pre></div>
+        </section>
+
+        <section id="chat" class="view">
+          <div class="chat-layout">
+            <div class="panel chat-panel">
+              <div class="panel-title"><div><h2>Loopback chat</h2><p>Connects only to the local Docker/Colibri API.</p></div><span id="api-state" class="pill">OFFLINE</span></div>
+              <div id="messages" class="messages"><div class="empty-chat">Start Docker from the source release, then send a message here.</div></div>
+              <form id="chat-form"><textarea id="chat-input" rows="3" placeholder="Message local K3…"></textarea><button class="button primary" type="submit">Send</button></form>
+            </div>
+            <div class="panel form-panel chat-settings">
+              <h3>Connection</h3>
+              <label>Local API URL<input id="api-url" value="http://127.0.0.1:8000" /></label>
+              <label>Local gateway password<input id="api-key" type="password" value="xcaliber-local" /></label>
+              <label>Model name<input id="api-model" value="kimi-k3-local" /></label>
+              <label>Reasoning effort<select id="reasoning-effort"><option>low</option><option>high</option><option selected>max</option></select></label>
+              <button id="probe-api" class="button">Test connection</button>
+              <div class="button-row"><button id="docker-start" class="button primary">Start local service</button><button id="docker-stop" class="button">Stop service</button></div>
+              <div class="button-row"><button id="docker-status" class="button">Service status</button><button id="docker-logs" class="button">Recent logs</button></div>
+              <p class="muted">Starting the service builds the local image on first use. It requires the complete model directory above.</p>
+              <hr />
+              <h3>Exact one-shot engine</h3>
+              <label>Maximum output tokens<input id="max-tokens" type="number" value="32" min="1" max="4096" /></label>
+              <button id="native-run" class="button">Run current prompt natively</button>
+              <p class="muted">The exact streamed engine can take minutes per token on ordinary storage. Use the persistent API when available.</p>
+            </div>
+          </div>
+        </section>
+
+        <section id="limits" class="view">
+          <div class="panel prose">
+            <p class="eyebrow">Design boundary</p><h2>What can actually improve K3 on ordinary hardware</h2>
+            <div class="truth-grid">
+              <article><strong>Multi-tier cache</strong><p>Keep popular experts in VRAM, then RAM, with SSD as the immutable backing store. Gain depends on measured expert locality.</p></article>
+              <article><strong>Asynchronous prefetch</strong><p>Overlap expert reads with CPU/GPU work. It hides latency only when useful computation is long enough.</p></article>
+              <article><strong>Speculative verification</strong><p>Draft several tokens cheaply and let exact K3 verify them together. It remains exact, but only if the draft avoids K3’s full expert cost.</p></article>
+              <article><strong>Several ordinary PCs</strong><p>Pool storage and memory through topology-aware sharding. Exact K3 needs a new tested worker protocol; it is not falsely marked complete here.</p></article>
+              <article><strong>Adaptive quality</strong><p>Reduce precision or routed experts for speed. This can be useful, but it is no longer numerically identical to official K3.</p></article>
+              <article><strong>Smaller surrogate</strong><p>The credible interactive path on a 32 GB laptop. It may imitate the workflow, but it must never be represented as the official 2.8T model.</p></article>
+            </div>
+          </div>
+          <div class="panel output-panel"><div class="panel-title"><h3>Measured conclusions</h3></div><pre id="limits-output">Refresh the plan to see machine-specific blockers.</pre></div>
+        </section>
+      </main>
+    </div>
+    <script src="app.js"></script>
+  </body>
+</html>

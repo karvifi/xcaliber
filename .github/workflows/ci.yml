@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  core:
+    name: Core and release audits
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - name: Rust formatting
+        run: cargo fmt --all -- --check
+      - name: Rust check
+        run: cargo check --workspace --all-targets --locked
+      - name: Rust lint
+        run: cargo clippy --workspace --all-targets --locked -- -D warnings
+      - name: Rust tests
+        run: cargo test --workspace --release --locked
+      - name: Release audit
+        shell: pwsh
+        run: ./scripts/audit.ps1
+      - name: Desktop JavaScript syntax
+        run: node --check app/ui/app.js
+
+  desktop:
+    name: Tauri command boundary
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Desktop check
+        run: cargo check --manifest-path app/src-tauri/Cargo.toml --locked
+      - name: Desktop tests
+        run: cargo test --manifest-path app/src-tauri/Cargo.toml --locked

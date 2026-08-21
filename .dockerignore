@@ -1,0 +1,11 @@
+**/.git
+**/target
+work
+outputs
+runtime/colibri/assets
+runtime/colibri/desktop
+runtime/colibri/docs
+runtime/colibri/site
+runtime/colibri/web/node_modules
+runtime/colibri/c/tests
+runtime/colibri/c/benches

@@ -1,0 +1,18 @@
+Xcaliber 1.1.0 (engineering release v46)
+
+Repository contents:
+
+- Complete Rust CLI and exact streamed engine source
+- Original Tauri desktop source and static user interface
+- Docker/Colibri adaptive service source
+- Hardware and performance planner
+- Model pull, verification, trunk packing, native execution, and local chat wiring
+- Source licenses, third-party notices, checksum tools, and validation evidence
+
+Generated Windows release layout (build artifacts are not committed to Git):
+
+- Windows CLI: xcaliber.exe
+- Exact native engine: xcaliber-engine.exe
+- Windows desktop: Xcaliber.exe
+
+Model weights are intentionally not included.

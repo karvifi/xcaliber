@@ -1,0 +1,23 @@
+**/target/
+/build/
+/dist/
+/app/src-tauri/target/
+**/__pycache__/
+**/.pytest_cache/
+*.py[cod]
+*.o
+*.obj
+*.pdb
+*.dll
+*.exe
+.env
+.env.*
+/models/
+*.safetensors
+*.gguf
+
+# Local editor and operating-system files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

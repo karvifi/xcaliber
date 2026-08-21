@@ -1,0 +1,25 @@
+Xcaliber Local AI Runtime
+Copyright 2026 Xcaliber contributors
+
+Code written specifically for Xcaliber is licensed under the GNU Affero General
+Public License, version 3 only. See LICENSE.
+
+This distribution also contains modified or bundled source from:
+
+- kimi-k3-in-rust, commit 32474ab322f7ae6f7bea1266ceb2bea63ac2d54a,
+  Apache License 2.0. Windows process-metrics and test-path changes are
+  modifications made for Xcaliber.
+- kimi-k3-in-c, commit ff11dce858a2eb8a781224facdffd33a1fa48d25,
+  Apache License 2.0. Its shard manifest and trunk-packing tool are included.
+- colibri, commit 33e67a9c004b6e608d1f19dfbdcc20793377f94f,
+  Apache License 2.0. Its Kimi K3 engine, local gateway, and Docker runtime are
+  included.
+
+The Apache License 2.0 text is in LICENSES/Apache-2.0.txt. Those components
+retain their upstream copyright and license notices.
+
+Unsloth Studio was reviewed only as a product and architecture reference. No
+Unsloth Studio or unsloth_cli source, assets, or branding is included.
+
+Kimi K3 model weights are not included. They are governed by Moonshot AI's
+separate model license. Xcaliber grants no rights to those weights.

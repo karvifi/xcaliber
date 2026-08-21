@@ -4,6 +4,25 @@ All notable public changes are recorded here. Xcaliber uses semantic versions fo
 own control-plane, CLI, desktop, and packaging code. Model weights and their upstream
 versions are separate.
 
+## 1.3.0 - 2026-08-21
+
+### Added
+
+- Expanded the original Windows application into a local model studio with workspaces,
+  reusable model profiles, persistent conversations, generation controls, API monitoring,
+  operation history, safe exports, appearance settings, and local-data controls.
+- Added a clean-room product map documenting which desktop-studio concepts apply to
+  Xcaliber and which capabilities are deliberately not represented as complete.
+- Added dependency-free frontend tests for local endpoint enforcement, stored-state bounds,
+  metrics, and conversation export.
+
+### Fixed
+
+- Separated the portable desktop executable from the CLI runtime directory so Windows
+  case-insensitive paths cannot overwrite the app or make it recursively launch itself.
+- Made the loopback HTTP test server consume the complete request before closing, removing
+  a Windows connection-reset race without weakening the production client assertions.
+
 ## 1.2.0 - 2026-08-21
 
 ### Added

@@ -1,9 +1,9 @@
-Xcaliber 1.2.0
+Xcaliber 1.3.0
 
 Repository contents:
 
 - Complete Rust CLI and exact streamed engine source
-- Original Tauri desktop source and static user interface
+- Original Tauri local model studio with workspaces, profiles, chat, telemetry, and exports
 - Docker/Colibri adaptive service source
 - Hardware and performance planner
 - Model pull, verification, trunk packing, native execution, and local chat wiring
@@ -16,6 +16,8 @@ Generated Windows release layout (build artifacts are not committed to Git):
 - Windows CLI: xcaliber.exe
 - Exact native engine: xcaliber-engine.exe
 - Windows desktop: Xcaliber.exe
+- Portable Studio archive: Xcaliber-1.3.0-windows-x64-studio.zip
+- Portable CLI archive: Xcaliber-1.3.0-windows-x64-cli.zip
 - Windows installer: Xcaliber_*_x64-setup.exe
 
 Model weights are intentionally not included.

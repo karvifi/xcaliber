@@ -43,6 +43,8 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           node --check app/ui/app.js
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          node --test app/tests/core.test.mjs
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           ./scripts/audit.ps1
       - name: Build release
         shell: pwsh

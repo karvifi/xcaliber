@@ -11,7 +11,7 @@ COPY runtime/colibri/c/ ./c/
 RUN make -C c kimi_k3 ARCH="${ARCH}" VK=1
 
 FROM debian:bookworm-slim
-ARG XCALIBER_VERSION=1.2.0
+ARG XCALIBER_VERSION=1.3.0
 LABEL org.opencontainers.image.title="Xcaliber" \
       org.opencontainers.image.description="Local adaptive Kimi K3 runtime" \
       org.opencontainers.image.url="https://github.com/karvifi/xcaliber" \

@@ -16,7 +16,7 @@ Xcaliber uses model files on your own storage. It does **not** call Moonshot's h
 inference API, does not require a Kimi API key, and does not upload prompts. Model
 weights are not included in this repository.
 
-![Xcaliber desktop overview using deterministic preview data](assets/screenshots/xcaliber-overview.png)
+![Xcaliber local model studio rendered from the Windows application frontend](assets/screenshots/xcaliber-studio-overview.png)
 
 The screenshot uses deterministic preview hardware data; it is an interface view, not
 a full-model benchmark or certification result.
@@ -69,7 +69,8 @@ supported download page. Release automation produces:
 
 | File | Purpose |
 |---|---|
-| Xcaliber-1.2.0-windows-x64-cli.zip | Primary portable Windows CLI, exact engine, trunk tool, release Compose file, licenses, and evidence |
+| Xcaliber-1.3.0-windows-x64-studio.zip | Portable Windows Studio, CLI, exact engine, release Compose file, licenses, and evidence |
+| Xcaliber-1.3.0-windows-x64-cli.zip | Portable Windows CLI, exact engine, trunk tool, release Compose file, licenses, and evidence |
 | Xcaliber_*_x64-setup.exe | Windows desktop and bundled CLI resources, produced by the NSIS release job |
 | SHA256SUMS.txt | SHA-256 values for every attached artifact |
 
@@ -200,7 +201,7 @@ It still requires the complete K3 checkpoint.
 The versioned public image is:
 
 ```text
-ghcr.io/karvifi/xcaliber:1.2.0
+ghcr.io/karvifi/xcaliber:1.3.0
 ```
 
 Use docker/compose.release.yaml to pull the public image, or docker/compose.yaml to
@@ -254,6 +255,12 @@ dependency tree or downloaded web frontend. Its content security policy permits 
 the application itself, Tauri IPC, and localhost API connections. The Tauri capability
 file grants no shell plugin.
 
+The interface includes separate local workspaces, reusable model profiles, persistent
+conversations, generation controls, runtime operations, request monitoring, job history,
+safe exports, and privacy/appearance settings. See the
+[clean-room desktop studio map](docs/CLEAN-ROOM-STUDIO-MAP.md) for the product concepts
+studied and the capabilities deliberately not represented as complete.
+
 Build on Windows with Rust's MSVC target, Microsoft C++ Build Tools, and WebView2:
 
 ```powershell
@@ -304,6 +311,7 @@ cargo clippy --workspace --all-targets --locked -- -D warnings
 cargo test --workspace --release --locked
 pwsh -File scripts\audit.ps1
 node --check app\ui\app.js
+node --test app\tests\core.test.mjs
 ```
 
 Desktop tests use their own locked Cargo workspace:

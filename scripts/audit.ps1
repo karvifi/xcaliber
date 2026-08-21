@@ -34,7 +34,7 @@ Assert-True ($compose.Contains('K3_TOPP: "${K3_TOPP:-0}"')) "Exact expert select
 Assert-True ($compose.Contains('--auto-tier')) "Compose does not use the hardware resource planner"
 Assert-True (-not $compose.Contains('K3_EXPERT_GB:')) "Compose still forces a fixed expert cache"
 Assert-True (-not $compose.Contains('K3_RAM_GB')) "Compose still forces a fixed RAM budget"
-Assert-True ($releaseCompose.Contains('ghcr.io/karvifi/xcaliber:1.2.0')) "release Compose does not use the versioned public image"
+Assert-True ($releaseCompose.Contains('ghcr.io/karvifi/xcaliber:1.3.0')) "release Compose does not use the versioned public image"
 Assert-True (-not $releaseCompose.Contains('build:')) "release Compose unexpectedly requires a source build"
 Assert-True ($releaseCompose.Contains('127.0.0.1:${K3_PORT:-8000}:8000')) "release Compose is not host-loopback only"
 Assert-True ($releaseCompose.Contains('COLI_API_KEY')) "release Compose has no local authentication"
@@ -80,14 +80,42 @@ Assert-True ($tauriConfig.Contains("connect-src 'self' ipc: http://ipc.localhost
 Assert-True ($capabilities.Contains('core:default')) "Desktop default capability is missing"
 Assert-True (-not $capabilities.Contains('shell:')) "Desktop grants a shell capability"
 Assert-True ($tauri.Contains('BaseDirectory::Resource')) "installed desktop does not resolve bundled resources"
+Assert-True ($tauri.Contains('runtime/xcaliber.exe')) "portable desktop does not use the collision-safe CLI location"
+Assert-True (-not $tauri.Contains('&["xcaliber.exe", "../windows-cli/xcaliber.exe"]')) "desktop can confuse Xcaliber.exe with xcaliber.exe on Windows"
 Assert-True ($tauriReleaseConfig.Contains('"active": true')) "release installer bundling is not active"
 Assert-True ($tauriReleaseConfig.Contains('"targets": ["nsis"]')) "release installer is not NSIS"
 Assert-True ($tauriReleaseConfig.Contains('xcaliber.exe')) "release installer does not include the CLI"
 Assert-True ($tauriReleaseConfig.Contains('compose.release.yaml')) "release installer does not include release Compose"
+$portableBuild = Get-Content -Raw -LiteralPath (Join-Path $ProjectRoot 'scripts\build-app.ps1')
+Assert-True ($portableBuild.Contains("runtime\xcaliber.exe")) "portable app builder does not isolate the CLI under runtime"
+Assert-True (-not $portableBuild.Contains('Get-ChildItem -LiteralPath $cliOutput | Copy-Item')) "portable app builder still has the case-insensitive executable collision"
+Assert-True ($portableBuild.Contains("RELEASE-MANIFEST.txt")) "portable app builder omits the release manifest"
+Assert-True ($portableBuild.Contains("CHECKSUMS.sha256")) "portable app builder omits the source checksum manifest"
 
 $ui = Get-Content -Raw -LiteralPath (Join-Path $ProjectRoot 'app\ui\index.html')
+$uiScript = Get-Content -Raw -LiteralPath (Join-Path $ProjectRoot 'app\ui\app.js')
+$uiCore = Get-Content -Raw -LiteralPath (Join-Path $ProjectRoot 'app\ui\core.mjs')
 Assert-True ($ui.Contains('assets/xcaliber-mark.svg')) "desktop does not use the Xcaliber mark"
 Assert-True (-not $ui.Contains('K3W Local')) "desktop still contains the internal K3W brand"
+foreach ($view in @('overview', 'models', 'playground', 'runtime', 'monitor', 'activity', 'exports', 'settings')) {
+    Assert-True ($ui.Contains("data-view=`"$view`"")) "desktop studio navigation is missing: $view"
+    Assert-True ($ui.Contains("id=`"$view`"")) "desktop studio view is missing: $view"
+}
+Assert-True ($uiCore.Contains('host === "localhost" || host === "127.0.0.1"')) "desktop profile policy is not limited to CSP-compatible loopback hosts"
+Assert-True ($uiCore.Contains('url.username || url.password')) "desktop profile policy accepts URL credentials"
+Assert-True ($uiScript.Contains('redirect: "error"')) "desktop local API requests can follow redirects"
+Assert-True (-not $uiScript.Contains('window.alert')) "desktop uses blocking browser alert dialogs"
+Assert-True (-not $uiScript.Contains('window.confirm')) "desktop uses blocking browser confirmation dialogs"
+Assert-True (-not ($ui + $uiScript + $uiCore).ToLowerInvariant().Contains('unsloth')) "desktop UI contains reference-product identifiers"
+Assert-True (Test-Path -LiteralPath (Join-Path $ProjectRoot 'app\tests\core.test.mjs') -PathType Leaf) "desktop frontend tests are missing"
+Assert-True (Test-Path -LiteralPath (Join-Path $ProjectRoot 'docs\CLEAN-ROOM-STUDIO-MAP.md') -PathType Leaf) "clean-room desktop feature map is missing"
+
+$referencedUiIds = [regex]::Matches($uiScript, '\$\("([^"]+)"\)') | ForEach-Object { $_.Groups[1].Value } | Sort-Object -Unique
+$declaredUiIds = [regex]::Matches($ui, 'id="([^"]+)"') | ForEach-Object { $_.Groups[1].Value }
+$missingUiIds = @($referencedUiIds | Where-Object { $_ -notin $declaredUiIds })
+$duplicateUiIds = @($declaredUiIds | Group-Object | Where-Object Count -gt 1)
+Assert-True ($missingUiIds.Count -eq 0) "desktop script references missing element ids: $($missingUiIds -join ', ')"
+Assert-True ($duplicateUiIds.Count -eq 0) "desktop markup contains duplicate element ids: $(($duplicateUiIds.Name) -join ', ')"
 foreach ($asset in @(
     'assets\brand\xcaliber-mark.svg',
     'assets\brand\xcaliber-mark.png',
@@ -95,6 +123,7 @@ foreach ($asset in @(
     'assets\brand\xcaliber-readme.svg',
     'assets\brand\xcaliber-compute-field.png',
     'assets\screenshots\xcaliber-overview.png',
+    'assets\screenshots\xcaliber-studio-overview.png',
     'app\src-tauri\icons\icon.ico',
     'app\src-tauri\icons\icon.png'
 )) {
@@ -117,9 +146,9 @@ Assert-True ($appManifest.Contains('[workspace]')) "Desktop is not isolated from
 Assert-True (Test-Path -LiteralPath (Join-Path $ProjectRoot 'app\src-tauri\Cargo.lock')) "Desktop lockfile is missing"
 Assert-True ((Get-Content -Raw -LiteralPath (Join-Path $ProjectRoot 'LICENSE')).Contains('GNU AFFERO GENERAL PUBLIC LICENSE')) "root AGPL license is missing"
 Assert-True (Test-Path -LiteralPath (Join-Path $ProjectRoot 'LICENSES\Apache-2.0.txt')) "bundled Apache license text is missing"
-Assert-True ($cliManifest.Contains('version = "1.2.0"')) "CLI release version is not 1.2.0"
-Assert-True ($appManifest.Contains('version = "1.2.0"')) "desktop release version is not 1.2.0"
-Assert-True ($tauriConfig.Contains('"version": "1.2.0"')) "Tauri release version is not 1.2.0"
+Assert-True ($cliManifest.Contains('version = "1.3.0"')) "CLI release version is not 1.3.0"
+Assert-True ($appManifest.Contains('version = "1.3.0"')) "desktop release version is not 1.3.0"
+Assert-True ($tauriConfig.Contains('"version": "1.3.0"')) "Tauri release version is not 1.3.0"
 
 $localApi = Get-Content -Raw -LiteralPath (Join-Path $ProjectRoot 'cli\src\local_api.rs')
 Assert-True ($localApi.Contains('address.ip().is_loopback()')) "CLI local API client does not verify the resolved address"
@@ -186,6 +215,7 @@ Write-Output '  Docker resources: auto-tier, direct I/O, exact expert selection 
 Write-Output '  release container: GHCR image + no source-build requirement'
 Write-Output '  local service: loopback publish + local password'
 Write-Output '  desktop: typed allowlist + localhost CSP + no shell capability'
+Write-Output "  desktop studio: 8 views + $($referencedUiIds.Count) bound element ids + redirect-safe loopback profiles"
 Write-Output '  installer: NSIS + bundled CLI/runtime resources'
 Write-Output '  brand: original mark, app icon, banner, and artwork'
 Write-Output '  local chat CLI: resolved loopback address enforcement'

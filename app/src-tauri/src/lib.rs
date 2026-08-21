@@ -107,9 +107,9 @@ fn cli_path(app: Option<&tauri::AppHandle>) -> Option<PathBuf> {
     let executable = env::current_exe().ok()?;
     let directory = executable.parent()?;
     let names: &[&str] = if cfg!(windows) {
-        &["xcaliber.exe", "../windows-cli/xcaliber.exe"]
+        &["runtime/xcaliber.exe", "../windows-cli/xcaliber.exe"]
     } else {
-        &["xcaliber", "../windows-cli/xcaliber"]
+        &["runtime/xcaliber", "../windows-cli/xcaliber"]
     };
     names
         .iter()
@@ -408,10 +408,14 @@ mod tests {
     fn docker_commands_are_fixed_and_shell_free() {
         let args = build_docker_arguments("docker_start", Path::new("compose.yaml"))
             .expect("start is allowed");
-        assert_eq!(
-            args,
-            ["compose", "-f", "compose.yaml", "up", "-d"]
-        );
+        assert_eq!(args, ["compose", "-f", "compose.yaml", "up", "-d"]);
         assert!(build_docker_arguments("docker_exec", Path::new("compose.yaml")).is_err());
+    }
+
+    #[test]
+    fn portable_windows_layout_cannot_confuse_the_app_with_the_cli() {
+        let source = include_str!("lib.rs");
+        assert!(source.contains("runtime/xcaliber.exe"));
+        assert!(!source.contains("&[\"xcaliber.exe\", \"../windows-cli/xcaliber.exe\"]"));
     }
 }

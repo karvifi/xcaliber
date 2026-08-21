@@ -1,6 +1,6 @@
 services:
   xcaliber:
-    image: ghcr.io/karvifi/xcaliber:1.2.0
+    image: ghcr.io/karvifi/xcaliber:1.3.0
     init: true
     ports:
       - "127.0.0.1:${K3_PORT:-8000}:8000"

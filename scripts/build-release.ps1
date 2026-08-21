@@ -1,6 +1,7 @@
 param(
     [string]$Cargo = "$env:USERPROFILE\.cargo\bin\cargo.exe",
     [string]$Output = "",
+    [string]$PortableAppTarget = "x86_64-pc-windows-msvc",
     [switch]$SkipInstaller
 )
 
@@ -9,7 +10,7 @@ $projectRoot = Split-Path -Parent $PSScriptRoot
 if (-not $Output) {
     $Output = Join-Path $projectRoot 'dist\release'
 }
-$version = '1.2.0'
+$version = '1.3.0'
 New-Item -ItemType Directory -Force -Path $Output | Out-Null
 
 & (Join-Path $PSScriptRoot 'audit.ps1') -ProjectRoot $projectRoot
@@ -40,12 +41,20 @@ if ($LASTEXITCODE -eq 0) { throw 'CLI chat accepted a non-loopback endpoint' }
 $cliArchive = Join-Path $Output "Xcaliber-$version-windows-x64-cli.zip"
 Compress-Archive -Path (Join-Path $cliOutput '*') -DestinationPath $cliArchive -CompressionLevel Optimal -Force
 
+$appOutput = Join-Path $projectRoot 'dist\windows-app'
+& (Join-Path $PSScriptRoot 'build-app.ps1') -Cargo $Cargo -Output $appOutput -Target $PortableAppTarget
+if (-not $?) { throw 'Windows Studio staging failed' }
+$appArchive = Join-Path $Output "Xcaliber-$version-windows-x64-studio.zip"
+Compress-Archive -Path (Join-Path $appOutput '*') -DestinationPath $appArchive -CompressionLevel Optimal -Force
+
 if (-not $SkipInstaller) {
     & (Join-Path $PSScriptRoot 'build-installer.ps1') -Cargo $Cargo -Output $Output
     if (-not $?) { throw 'Windows installer staging failed' }
 }
 
-$artifacts = Get-ChildItem -LiteralPath $Output -File | Where-Object { $_.Name -ne 'SHA256SUMS.txt' }
+$artifacts = Get-ChildItem -LiteralPath $Output -File | Where-Object {
+    $_.Name -like "Xcaliber-$version-*" -or $_.Name -like "Xcaliber_${version}_*"
+}
 $checksums = foreach ($artifact in $artifacts) {
     $hash = (Get-FileHash -LiteralPath $artifact.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
     "$hash  $($artifact.Name)"

@@ -3,132 +3,227 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="color-scheme" content="dark" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="description" content="Xcaliber local model workspace for Windows" />
     <title>Xcaliber</title>
+    <link rel="icon" href="assets/xcaliber-mark.svg" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <a class="skip-link" href="#workspace">Skip to workspace</a>
-    <div class="shell">
+    <div class="app-shell">
       <aside class="sidebar">
-        <div class="brand">
-          <img src="assets/xcaliber-mark.svg" alt="" width="42" height="42" />
-          <span><strong>XCALIBER</strong><small>LOCAL SYSTEMS</small></span>
+        <div class="brand-block">
+          <img src="assets/xcaliber-mark.svg" alt="Xcaliber" width="40" height="40" />
+          <span><strong>XCALIBER</strong><small>LOCAL MODEL STUDIO</small></span>
         </div>
-        <p class="brand-sub">Run what fits. Know what doesn’t. No hosted Kimi API.</p>
+
+        <div class="workspace-switcher">
+          <label for="workspace-select">Workspace</label>
+          <div class="select-row">
+            <select id="workspace-select" aria-label="Active workspace"></select>
+            <button id="workspace-add" class="icon-button" title="Create workspace" aria-label="Create workspace">+</button>
+          </div>
+        </div>
+
         <nav aria-label="Application sections">
-          <button class="nav active" data-view="overview">Overview</button>
-          <button class="nav" data-view="setup">Model setup</button>
-          <button class="nav" data-view="chat">Local chat</button>
-          <button class="nav" data-view="limits">Performance truth</button>
+          <p class="nav-label">Build</p>
+          <button class="nav active" data-view="overview"><span class="nav-mark">01</span>Overview</button>
+          <button class="nav" data-view="models"><span class="nav-mark">02</span>Models</button>
+          <button class="nav" data-view="playground"><span class="nav-mark">03</span>Playground</button>
+          <p class="nav-label">Operate</p>
+          <button class="nav" data-view="runtime"><span class="nav-mark">04</span>Runtime</button>
+          <button class="nav" data-view="monitor"><span class="nav-mark">05</span>API monitor</button>
+          <button class="nav" data-view="activity"><span class="nav-mark">06</span>Activity</button>
+          <p class="nav-label">System</p>
+          <button class="nav" data-view="exports"><span class="nav-mark">07</span>Export</button>
+          <button class="nav" data-view="settings"><span class="nav-mark">08</span>Settings</button>
         </nav>
+
         <div class="runtime-card">
           <span id="runtime-dot" class="status-dot"></span>
-          <div><strong id="runtime-label">Checking runtime…</strong><small id="runtime-path"></small><small id="app-version"></small></div>
+          <div>
+            <strong id="runtime-label">Checking runtime…</strong>
+            <small id="runtime-path"></small>
+            <small id="app-version"></small>
+          </div>
         </div>
       </aside>
 
       <main id="workspace">
-        <header>
-          <div><p class="eyebrow">Adaptive local inference</p><h1 id="view-title">System overview</h1></div>
-          <div class="header-actions"><button id="cancel" class="button ghost">Cancel task</button><button id="refresh" class="button primary">Refresh plan</button></div>
+        <header class="topbar">
+          <div>
+            <p id="view-eyebrow" class="eyebrow">Local systems</p>
+            <h1 id="view-title">System overview</h1>
+            <p id="view-subtitle" class="view-subtitle">Measure first, then choose a runtime that fits.</p>
+          </div>
+          <div class="header-actions">
+            <button id="cancel" class="button quiet" disabled>Cancel task</button>
+            <button id="refresh" class="button primary">Refresh system</button>
+          </div>
         </header>
 
-        <section id="overview" class="view active">
-          <div id="onboarding" class="onboarding panel">
+        <section id="overview" class="view active" aria-labelledby="view-title">
+          <div id="onboarding" class="onboarding surface">
             <div>
               <p class="eyebrow">First run</p>
-              <h2>Start with this computer, not a promise.</h2>
-              <p>Xcaliber checks capacity first. If full K3 does not fit, connect a smaller local OpenAI-compatible model and use the same private chat interface.</p>
+              <h2>Set up a private model workspace.</h2>
+              <p>Xcaliber checks this computer, records local model profiles, and connects only to loopback inference services.</p>
             </div>
             <ol>
-              <li><strong>Measure</strong><span>Inspect RAM, GPU, storage, and Docker.</span></li>
-              <li><strong>Choose</strong><span>Exact K3, adaptive K3, or a practical smaller model.</span></li>
-              <li><strong>Run locally</strong><span>Keep model files and prompts on this machine.</span></li>
+              <li><span>1</span><div><strong>Inspect</strong><small>RAM, GPU, storage and Docker</small></div></li>
+              <li><span>2</span><div><strong>Choose</strong><small>Exact K3, adaptive K3 or a smaller local model</small></div></li>
+              <li><span>3</span><div><strong>Run</strong><small>Keep prompts and model files on this computer</small></div></li>
             </ol>
-            <div class="button-row"><button id="onboarding-check" class="button primary">Check this computer</button><button id="onboarding-chat" class="button">Connect a local model</button><button id="onboarding-close" class="button ghost" aria-label="Dismiss first-run guide">Dismiss</button></div>
+            <div class="button-row">
+              <button id="onboarding-check" class="button primary">Check this computer</button>
+              <button id="onboarding-model" class="button">Add a model</button>
+              <button id="onboarding-close" class="button quiet">Dismiss</button>
+            </div>
           </div>
-          <div class="hero panel">
-            <div><span class="pill safe">LOCAL ONLY</span><h2>A planner that separates “runs” from “runs well.”</h2><p>Xcaliber measures capacity and bandwidth, selects an honest execution mode, and refuses impossible downloads before touching the network.</p></div>
-            <div class="hero-number"><strong>2.8T</strong><span>total parameters</span><strong>104B</strong><span>active per token</span></div>
+
+          <div id="workspace-creator" class="inline-editor surface" hidden>
+            <div><h2>New workspace</h2><p>Conversations and the selected model stay separate by workspace.</p></div>
+            <label>Name<input id="workspace-name" maxlength="48" placeholder="Research lab" /></label>
+            <label>Description<input id="workspace-description" maxlength="100" placeholder="What this workspace is for" /></label>
+            <div class="button-row"><button id="workspace-save" class="button primary">Create</button><button id="workspace-cancel" class="button quiet">Cancel</button></div>
+            <p id="workspace-error" class="inline-error" role="alert"></p>
           </div>
+
+          <div class="hero surface">
+            <div class="hero-copy">
+              <span class="flag safe">LOCAL CONTROL PLANE</span>
+              <h2>One Windows workspace for models that actually fit.</h2>
+              <p>Plan hardware, prepare official K3 files, manage a fixed runtime, chat through a local endpoint, and inspect every request.</p>
+              <div class="button-row"><button class="button primary route-button" data-target="playground">Open playground</button><button class="text-button route-button" data-target="models">Manage models →</button></div>
+            </div>
+            <div class="hero-spec">
+              <span>Official K3 scale</span><strong>2.8T</strong><small>total parameters</small>
+              <strong>104B</strong><small>active per token</small>
+            </div>
+          </div>
+
           <div class="stat-grid">
-            <article class="panel stat"><span>RAM</span><strong id="ram-stat">—</strong><small id="ram-available">Waiting for plan</small></article>
-            <article class="panel stat"><span>GPU</span><strong id="gpu-stat">—</strong><small id="gpu-detail">Optional acceleration</small></article>
-            <article class="panel stat"><span>Model drive</span><strong id="disk-stat">—</strong><small>1.70 TB practical target</small></article>
-            <article class="panel stat"><span>Recommended</span><strong id="mode-stat">—</strong><small id="mode-detail">Hardware-aware</small></article>
+            <article class="metric surface"><span>RAM</span><strong id="ram-stat">—</strong><small id="ram-available">Waiting for plan</small></article>
+            <article class="metric surface"><span>GPU</span><strong id="gpu-stat">—</strong><small id="gpu-detail">Optional acceleration</small></article>
+            <article class="metric surface"><span>Model drive</span><strong id="disk-stat">—</strong><small>1.70 TB practical K3 target</small></article>
+            <article class="metric surface"><span>Recommended</span><strong id="mode-stat">—</strong><small id="mode-detail">Hardware-aware</small></article>
           </div>
-          <div id="mode-grid" class="mode-grid"></div>
-          <div class="panel output-panel"><div class="panel-title"><h3>Readiness</h3><span id="task-state">Idle</span></div><pre id="overview-output">Refresh the plan to inspect this system.</pre></div>
+
+          <div class="overview-grid">
+            <div class="surface section-pad">
+              <div class="section-heading"><div><p class="eyebrow">Execution choices</p><h2>Modes for this machine</h2></div></div>
+              <div id="mode-grid" class="mode-grid"><p class="empty-state">Refresh the system to calculate execution modes.</p></div>
+            </div>
+            <div class="surface section-pad">
+              <div class="section-heading"><div><p class="eyebrow">Current workspace</p><h2 id="workspace-summary-name">Local lab</h2></div><span id="workspace-message-count" class="data-value">0 messages</span></div>
+              <dl class="summary-list">
+                <div><dt>Model profile</dt><dd id="workspace-profile">Xcaliber K3</dd></div>
+                <div><dt>API endpoint</dt><dd id="workspace-endpoint">127.0.0.1:8000</dd></div>
+                <div><dt>Requests recorded</dt><dd id="workspace-requests">0</dd></div>
+              </dl>
+            </div>
+          </div>
+
+          <div class="surface console-panel"><div class="panel-title"><h2>Readiness</h2><span id="task-state">Idle</span></div><pre id="overview-output">Refresh the system to inspect this computer.</pre></div>
         </section>
 
-        <section id="setup" class="view">
-          <div class="two-column">
-            <div class="panel form-panel">
-              <h2>Model and trunk</h2>
-              <label>Official model directory<input id="model-dir" placeholder="E:\\Models\\Kimi-K3" /></label>
-              <label>Packed exact trunk directory<input id="trunk-dir" placeholder="E:\\Models\\Kimi-K3-trunk" /></label>
-              <label>Optional I/O benchmark file<input id="benchmark-file" placeholder="A large file on the target model drive" /></label>
+        <section id="models" class="view" aria-labelledby="view-title">
+          <div class="section-intro"><div><h2>Local model profiles</h2><p>Profiles connect a workspace to Xcaliber K3 or another OpenAI-compatible server running on this computer.</p></div><button id="profile-toggle" class="button primary">Add profile</button></div>
+          <div id="profile-editor" class="surface inline-editor profile-editor" hidden>
+            <label>Profile name<input id="profile-name" maxlength="48" placeholder="My local model" /></label>
+            <label>Runtime type<select id="profile-kind"><option value="compatible">Local compatible server</option><option value="xcaliber">Xcaliber K3</option></select></label>
+            <label>Loopback API URL<input id="profile-api-url" value="http://127.0.0.1:8000" /></label>
+            <label>Model identifier<input id="profile-model-id" value="local-model" /></label>
+            <label class="wide">Official model directory <span class="optional">optional for compatible servers</span><input id="profile-model-dir" placeholder="E:\Models\Kimi-K3" /></label>
+            <label class="wide">Packed trunk directory <span class="optional">exact K3 only</span><input id="profile-trunk-dir" placeholder="E:\Models\Kimi-K3-trunk" /></label>
+            <div class="wide button-row"><button id="profile-save" class="button primary">Save profile</button><button id="profile-cancel" class="button quiet">Cancel</button></div>
+            <p id="profile-error" class="wide inline-error" role="alert"></p>
+          </div>
+          <div id="profile-grid" class="profile-grid"></div>
+          <div class="surface truth-strip"><strong>No model masquerading.</strong><span>A compatible smaller model remains labelled as that model. Xcaliber never presents it as official Kimi K3.</span></div>
+        </section>
+
+        <section id="playground" class="view" aria-labelledby="view-title">
+          <div class="playground-layout">
+            <aside class="thread-rail surface">
+              <div class="rail-head"><h2>Conversation</h2><button id="new-chat" class="icon-button" title="New conversation">+</button></div>
+              <div id="chat-summary" class="thread-item active"><strong>Current session</strong><small>0 messages</small></div>
+              <div class="rail-note"><strong>Stored locally</strong><p>Conversation history remains in this WebView profile until you clear it.</p></div>
+            </aside>
+            <div class="surface chat-panel">
+              <div class="panel-title chat-title"><div><h2 id="chat-model-label">Xcaliber K3</h2><p id="chat-endpoint-label">http://127.0.0.1:8000</p></div><span id="api-state" class="flag">OFFLINE</span></div>
+              <div id="messages" class="messages" aria-live="polite"><div class="empty-chat"><span>XC</span><h3>Start a private conversation</h3><p>Select a local model profile, test its connection, then send a message.</p></div></div>
+              <form id="chat-form">
+                <label class="sr-only" for="chat-input">Message</label>
+                <textarea id="chat-input" rows="3" placeholder="Message your local model…"></textarea>
+                <div class="composer-actions"><span id="composer-model">kimi-k3-local</span><button class="button primary" type="submit">Send</button></div>
+              </form>
+            </div>
+            <aside class="surface inspector">
+              <div class="inspector-section"><p class="eyebrow">Connection</p><label>Profile<select id="chat-profile"></select></label><label>Local password<input id="api-key" type="password" autocomplete="off" value="xcaliber-local" /></label><button id="probe-api" class="button full">Test connection</button><p id="connection-error" class="inline-error" role="alert"></p></div>
+              <div class="inspector-section"><p class="eyebrow">Generation</p><label>Maximum tokens<input id="max-tokens" type="number" value="256" min="1" max="4096" /></label><label>Temperature<input id="temperature" type="number" value="0.2" min="0" max="2" step="0.1" /></label><label>Top P<input id="top-p" type="number" value="0.9" min="0" max="1" step="0.05" /></label><label>Reasoning effort<select id="reasoning-effort"><option>low</option><option>high</option><option selected>max</option></select></label></div>
+              <div class="inspector-section"><button id="native-run" class="button full">Run exact one-shot</button><button id="export-chat" class="button quiet full">Export conversation</button></div>
+            </aside>
+          </div>
+        </section>
+
+        <section id="runtime" class="view" aria-labelledby="view-title">
+          <div class="runtime-grid">
+            <div class="surface form-panel">
+              <p class="eyebrow">Preparation</p><h2>Official K3 files</h2>
+              <label>Model directory<input id="model-dir" placeholder="E:\Models\Kimi-K3" /></label>
+              <label>Packed trunk directory<input id="trunk-dir" placeholder="E:\Models\Kimi-K3-trunk" /></label>
+              <label>Destination<input id="destination" placeholder="E:\Models\Kimi-K3" /></label>
+              <label>Optional I/O benchmark file<input id="benchmark-file" placeholder="Large file on the model drive" /></label>
               <label class="check"><input id="measure-io" type="checkbox" /><span>Measure a 512 MB buffered sequential read</span></label>
-              <div class="button-row"><button id="doctor" class="button">Run doctor</button><button id="plan" class="button primary">Build plan</button></div>
+              <div class="button-row"><button id="doctor" class="button">Run doctor</button><button id="plan" class="button primary">Build plan</button><button id="pack" class="button">Pack trunk</button></div>
+              <button id="pull" class="button danger full">Prepare 1.56 TB download</button>
+              <p id="pull-warning" class="inline-warning">Pull is resumable and verifies all 96 official shards. Xcaliber refuses the operation when free space is insufficient.</p>
             </div>
-            <div class="panel form-panel">
-              <h2>Long operations</h2>
-              <p class="muted">Pull is resumable and verifies all 96 shards. It will not start unless the selected drive has enough free space.</p>
-              <label>Download or packed-trunk destination<input id="destination" placeholder="E:\\Models\\Kimi-K3" /></label>
-              <div class="button-row"><button id="pull" class="button danger">Pull 1.56 TB model</button><button id="pack" class="button">Pack 109 GB trunk</button></div>
-              <div class="warning"><strong>Nothing is hidden:</strong> the official checkpoint stays outside the application and under its own model license.</div>
+            <div class="surface form-panel">
+              <p class="eyebrow">Persistent service</p><h2>Docker runtime</h2>
+              <div class="service-state"><span id="docker-dot" class="status-dot"></span><div><strong id="docker-label">Not checked</strong><small>Loopback OpenAI-compatible endpoint</small></div></div>
+              <div class="button-grid"><button id="docker-start" class="button primary">Start service</button><button id="docker-stop" class="button">Stop service</button><button id="docker-status" class="button">Service status</button><button id="docker-logs" class="button">Recent logs</button></div>
+              <div class="boundary-note"><strong>Fixed command boundary</strong><p>The desktop app can call only allowlisted Xcaliber and Docker Compose actions. It has no arbitrary shell command.</p></div>
             </div>
           </div>
-          <div class="panel practical-path">
-            <div><p class="eyebrow">Ordinary computer path</p><h2>Use a smaller local model without pretending it is K3.</h2><p class="muted">Start any local OpenAI-compatible server you trust, then enter its loopback URL and model name in Local chat. No Moonshot API key is needed.</p></div>
-            <button id="open-local-chat" class="button primary">Open local chat</button>
-          </div>
-          <div class="panel output-panel"><div class="panel-title"><h3>Operation output</h3><span id="setup-state">Idle</span></div><pre id="setup-output">No operation has run.</pre></div>
+          <div class="surface console-panel"><div class="panel-title"><h2>Operation output</h2><span id="runtime-state">Idle</span></div><pre id="runtime-output">No operation has run.</pre></div>
         </section>
 
-        <section id="chat" class="view">
-          <div class="chat-layout">
-            <div class="panel chat-panel">
-              <div class="panel-title"><div><h2>Loopback chat</h2><p>Connects only to a local OpenAI-compatible API.</p></div><span id="api-state" class="pill">OFFLINE</span></div>
-              <div id="messages" class="messages"><div class="empty-chat">Start Xcaliber Docker for K3, or connect another local OpenAI-compatible model.</div></div>
-              <form id="chat-form"><label class="sr-only" for="chat-input">Message</label><textarea id="chat-input" rows="3" placeholder="Message your local model…"></textarea><button class="button primary" type="submit">Send</button></form>
-            </div>
-            <div class="panel form-panel chat-settings">
-              <h3>Connection</h3>
-              <label>Local API URL<input id="api-url" value="http://127.0.0.1:8000" /></label>
-              <label>Local gateway password<input id="api-key" type="password" value="xcaliber-local" /></label>
-              <label>Model name<input id="api-model" value="kimi-k3-local" /></label>
-              <label>Reasoning effort<select id="reasoning-effort"><option>low</option><option>high</option><option selected>max</option></select></label>
-              <button id="probe-api" class="button">Test connection</button>
-              <div class="button-row"><button id="docker-start" class="button primary">Start local service</button><button id="docker-stop" class="button">Stop service</button></div>
-              <div class="button-row"><button id="docker-status" class="button">Service status</button><button id="docker-logs" class="button">Recent logs</button></div>
-              <p class="muted">The service buttons control Xcaliber's K3 Docker stack and require the complete model directory. The connection fields can also target a smaller local model.</p>
-              <hr />
-              <h3>Exact one-shot engine</h3>
-              <label>Maximum output tokens<input id="max-tokens" type="number" value="32" min="1" max="4096" /></label>
-              <button id="native-run" class="button">Run current prompt natively</button>
-              <p class="muted">The exact streamed engine can take minutes per token on ordinary storage. Use the persistent API when available.</p>
-            </div>
+        <section id="monitor" class="view" aria-labelledby="view-title">
+          <div class="monitor-stats">
+            <article class="metric surface"><span>Requests</span><strong id="monitor-total">0</strong><small>bounded local history</small></article>
+            <article class="metric surface"><span>Completed</span><strong id="monitor-completed">0</strong><small>successful responses</small></article>
+            <article class="metric surface"><span>Errors</span><strong id="monitor-errors">0</strong><small>connection or server failures</small></article>
+            <article class="metric surface"><span>Average latency</span><strong id="monitor-latency">—</strong><small>completed requests</small></article>
           </div>
+          <div class="surface table-panel"><div class="panel-title"><div><h2>Local API traffic</h2><p>Only requests made by this application are recorded.</p></div><button id="clear-monitor" class="button quiet">Clear</button></div><div class="table-scroll"><table><thead><tr><th>Time</th><th>Status</th><th>Model</th><th>Endpoint</th><th>Duration</th><th>Tokens</th></tr></thead><tbody id="monitor-table"></tbody></table></div></div>
         </section>
 
-        <section id="limits" class="view">
-          <div class="panel prose">
-            <p class="eyebrow">Design boundary</p><h2>What can actually improve K3 on ordinary hardware</h2>
-            <div class="truth-grid">
-              <article><strong>Multi-tier cache</strong><p>Keep popular experts in VRAM, then RAM, with SSD as the immutable backing store. Gain depends on measured expert locality.</p></article>
-              <article><strong>Asynchronous prefetch</strong><p>Overlap expert reads with CPU/GPU work. It hides latency only when useful computation is long enough.</p></article>
-              <article><strong>Speculative verification</strong><p>Draft several tokens cheaply and let exact K3 verify them together. It remains exact, but only if the draft avoids K3’s full expert cost.</p></article>
-              <article><strong>Several ordinary PCs</strong><p>Pool storage and memory through topology-aware sharding. Exact K3 needs a new tested worker protocol; it is not falsely marked complete here.</p></article>
-              <article><strong>Adaptive quality</strong><p>Reduce precision or routed experts for speed. This can be useful, but it is no longer numerically identical to official K3.</p></article>
-              <article><strong>Smaller surrogate</strong><p>The credible interactive path on a 32 GB laptop. It may imitate the workflow, but it must never be represented as the official 2.8T model.</p></article>
-            </div>
+        <section id="activity" class="view" aria-labelledby="view-title">
+          <div class="surface table-panel"><div class="panel-title"><div><h2>Local operations</h2><p>Doctor, planning, preparation and Docker jobs started from this app.</p></div><button id="clear-activity" class="button quiet">Clear completed</button></div><div class="table-scroll"><table><thead><tr><th>Started</th><th>Operation</th><th>Status</th><th>Exit</th><th>Summary</th></tr></thead><tbody id="activity-table"></tbody></table></div></div>
+        </section>
+
+        <section id="exports" class="view" aria-labelledby="view-title">
+          <div class="export-grid">
+            <article class="surface export-card"><span class="export-index">A</span><h2>Conversation</h2><p>Download the current workspace conversation as readable Markdown.</p><button id="download-conversation" class="button">Download Markdown</button></article>
+            <article class="surface export-card"><span class="export-index">B</span><h2>Diagnostics</h2><p>Export the latest plan, runtime identity, jobs and request summary as JSON.</p><button id="download-diagnostics" class="button">Download diagnostics</button></article>
+            <article class="surface export-card"><span class="export-index">C</span><h2>Connection profile</h2><p>Save the selected model identifier and loopback endpoint without its password.</p><button id="download-profile" class="button">Download profile</button></article>
           </div>
-          <div class="panel output-panel"><div class="panel-title"><h3>Measured conclusions</h3></div><pre id="limits-output">Refresh the plan to see machine-specific blockers.</pre></div>
+          <div class="surface boundary-note large"><strong>Model export is deliberately separate.</strong><p>Xcaliber does not duplicate or relicense the Kimi checkpoint. Model files stay in their selected directory under the model’s own license.</p></div>
+        </section>
+
+        <section id="settings" class="view" aria-labelledby="view-title">
+          <div class="settings-grid">
+            <div class="surface form-panel"><p class="eyebrow">Appearance</p><h2>Interface</h2><label>Theme<select id="theme-setting"><option value="dark">Dark</option><option value="light">Light</option><option value="system">Use Windows setting</option></select></label><label>Density<select id="density-setting"><option value="comfortable">Comfortable</option><option value="compact">Compact</option></select></label><label class="check"><input id="motion-setting" type="checkbox" /><span>Reduce interface motion</span></label></div>
+            <div class="surface form-panel"><p class="eyebrow">Privacy</p><h2>Local data</h2><dl class="summary-list"><div><dt>Hosted Kimi API</dt><dd>Never used</dd></div><div><dt>Prompt upload</dt><dd>Disabled</dd></div><div><dt>API destination</dt><dd>Loopback HTTP only</dd></div><div><dt>Passwords</dt><dd>Not persisted</dd></div></dl><button id="clear-local-data" class="button danger">Prepare local data reset</button><p id="clear-data-warning" class="inline-warning">This removes workspaces, profiles, conversations, jobs and metrics stored by the app. It does not delete model files.</p></div>
+          </div>
+          <div class="surface section-pad"><p class="eyebrow">Performance truth</p><h2>What Xcaliber can and cannot change</h2><div class="truth-grid"><article><strong>Tiered storage</strong><p>VRAM, RAM and SSD placement can reduce repeated expert reads.</p></article><article><strong>Prefetch</strong><p>I/O can overlap useful computation but cannot erase storage bandwidth limits.</p></article><article><strong>Exact path</strong><p>The Rust engine preserves official semantics and may be very slow on ordinary drives.</p></article><article><strong>Adaptive path</strong><p>Quantization improves practicality but is not numerically identical to official K3.</p></article><article><strong>Smaller models</strong><p>The normal interactive path on low-storage systems, labelled honestly.</p></article><article><strong>Full K3 checkpoint</strong><p>Approximately 1.56 TB remains required; the application cannot manufacture missing weights.</p></article></div></div>
         </section>
       </main>
     </div>
-    <script src="app.js"></script>
+    <div id="toast-region" class="toast-region" aria-live="polite" aria-atomic="true"></div>
+    <script type="module" src="app.js"></script>
   </body>
 </html>

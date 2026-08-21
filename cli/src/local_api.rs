@@ -241,7 +241,7 @@ pub fn run(args: &[OsString]) -> Result<i32, String> {
 mod tests {
     use super::{decode_chunked, endpoint, request, Endpoint, Options};
     use std::io::{Read, Write};
-    use std::net::TcpListener;
+    use std::net::{Shutdown, TcpListener};
     use std::thread;
 
     #[test]
@@ -272,9 +272,34 @@ mod tests {
         let port = listener.local_addr().unwrap().port();
         let server = thread::spawn(move || {
             let (mut stream, _) = listener.accept().unwrap();
-            let mut request_bytes = [0u8; 8192];
-            let read = stream.read(&mut request_bytes).unwrap();
-            let request_text = String::from_utf8_lossy(&request_bytes[..read]);
+            let mut request_bytes = Vec::new();
+            let mut buffer = [0u8; 4096];
+            loop {
+                let read = stream.read(&mut buffer).unwrap();
+                assert!(
+                    read > 0,
+                    "client closed before sending the complete request"
+                );
+                request_bytes.extend_from_slice(&buffer[..read]);
+                let Some(header_end) = request_bytes
+                    .windows(4)
+                    .position(|window| window == b"\r\n\r\n")
+                else {
+                    continue;
+                };
+                let headers = String::from_utf8_lossy(&request_bytes[..header_end]);
+                let content_length = headers
+                    .lines()
+                    .find_map(|line| {
+                        line.strip_prefix("Content-Length: ")
+                            .and_then(|value| value.parse::<usize>().ok())
+                    })
+                    .expect("request should contain Content-Length");
+                if request_bytes.len() >= header_end + 4 + content_length {
+                    break;
+                }
+            }
+            let request_text = String::from_utf8_lossy(&request_bytes);
             assert!(request_text.starts_with("POST /v1/chat/completions HTTP/1.1\r\n"));
             assert!(request_text.contains("Authorization: Bearer test-key\r\n"));
             let body = br#"{"choices":[{"message":{"content":"local test passed"}}]}"#;
@@ -284,6 +309,7 @@ mod tests {
             );
             stream.write_all(response.as_bytes()).unwrap();
             stream.write_all(body).unwrap();
+            stream.shutdown(Shutdown::Write).unwrap();
         });
         let options = Options {
             endpoint: Endpoint {

@@ -1,6 +1,6 @@
 # Validation record
 
-Release: Xcaliber 1.2.0
+Release: Xcaliber 1.3.0
 Validation date: 2026-08-21
 Host: Windows, Intel Core i7-9750H (6 cores/12 threads), 34.2 GB RAM,
 Intel UHD 630, NVIDIA GeForce GTX 1660 Ti (6 GB)
@@ -14,7 +14,7 @@ Toolchain used:
 - actionlint 1.7.12, downloaded from its official GitHub release and verified against
   GitHub's published SHA-256 digest.
 
-## Executed and passed for 1.2.0
+## Executed and passed for 1.3.0
 
 ### Core Rust workspace
 
@@ -26,10 +26,12 @@ Toolchain used:
   - 2 real-checkpoint tests were ignored by their explicit 1.56 TB checkpoint guard;
   - 0 tests failed.
 - The new loopback chat parser and chunked-HTTP decoder tests passed.
+- The repaired loopback request round trip passed ten consecutive executions before the
+  complete core suite was rerun.
 
 ### Portable Windows CLI
 
-- `xcaliber 1.2.0` GNU release executable built.
+- `xcaliber 1.3.0` GNU release executable built.
 - Version, requirements, doctor JSON, and exact-engine help smoke tests passed.
 - Doctor returned the intentional not-ready exit status on this host.
 - A local TCP mock returned an OpenAI-compatible response through
@@ -40,8 +42,7 @@ Toolchain used:
 
 Portable archive:
 
-- File: `Xcaliber-1.2.0-windows-x64-cli.zip`
-- Size before the final evidence/checksum regeneration: 1,038,807 bytes
+- File: `Xcaliber-1.3.0-windows-x64-cli.zip`
 - The final published SHA-256 is generated after this validation file and all source
   checks are complete; see the attached `SHA256SUMS.txt`.
 
@@ -55,11 +56,27 @@ Portable archive:
 - That release-config check found and fixed duplicate Tauri resource destinations
   before publication.
 - JavaScript syntax and both Tauri JSON configurations passed parsing.
+- Three dependency-free frontend tests passed for loopback policy, bounded state,
+  metrics, token estimates, and conversation export.
+- The permanent desktop audit resolved all 98 JavaScript element references against
+  unique HTML ids and found no missing or duplicate bindings.
+- The real frontend was rendered in a Windows Chromium browser at 1440 by 1000 pixels;
+  persisted workspace state, navigation, brand assets, and the browser/Tauri boundary
+  rendered successfully. The resulting image is `assets/screenshots/xcaliber-studio-overview.png`.
+- A GNU release build produced a distinct `Xcaliber.exe` desktop binary and
+  `runtime/xcaliber.exe` CLI. The staged CLI version smoke test passed, and the desktop
+  GUI process remained running through a six-second Windows process-start smoke test.
+- A regression test and release-layout audit prevent the case-insensitive Windows
+  `Xcaliber.exe`/`xcaliber.exe` collision that could otherwise overwrite the desktop app
+  or make it recursively launch itself.
+- The portable Studio layout includes the app, CLI, exact engine, trunk packing tool,
+  release Compose file, README, licenses, release/source checksum manifests, and
+  validation record.
 
 The linked GNU test executable cannot start on this Windows installation and returns
 `STATUS_ENTRYPOINT_NOT_FOUND`. This is the same MinGW/UCRT loader limitation
-recorded for 1.1.0. The four command-boundary tests were not counted as executed for
-1.2.0. The repository release workflow runs them with the supported MSVC target before
+recorded for 1.1.0. The five command-boundary/layout tests were not counted as executed for
+1.3.0. The repository release workflow runs them with the supported MSVC target before
 building NSIS.
 
 ### Release, security, and repository gates
@@ -104,9 +121,9 @@ building NSIS.
 
 ## Result for this computer
 
-The primary portable CLI is built and usable for machine planning, guarded model
-management, the exact-engine launcher, and loopback chat with a separately running
-local OpenAI-compatible model.
+The portable Windows Studio and CLI are built and usable for workspace/profile management,
+machine planning, guarded model management, request monitoring, the exact-engine launcher,
+and loopback chat with a separately running local OpenAI-compatible model.
 
 This computer does not have enough storage for the 1.561 TB official checkpoint,
 Docker is absent, and 34.2 GB RAM plus a 6 GB GPU cannot hold full K3. The correct

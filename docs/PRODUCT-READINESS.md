@@ -9,7 +9,7 @@ hardware the repository cannot contain.
 |---|---|---|
 | Windows CLI | Hardware plan, doctor, guarded model pull, checksum verification, trunk packing, exact launch, and loopback local chat | Rust only when building from source; model files only for model execution |
 | Portable CLI archive | CLI, exact engine, trunk tool, release Compose file, licenses, and validation record | Windows x64 |
-| Desktop controller | First-run plan, fixed CLI actions, fixed Docker actions, and loopback chat | Windows, WebView2, bundled CLI resources |
+| Desktop studio | Workspaces, model profiles, persistent chat, fixed CLI/Docker actions, API monitoring, job history, safe exports, and settings | Windows, WebView2, bundled CLI resources |
 | Docker source | Reproducible K3 engine build, non-root container, loopback publish, authentication, and health check | Docker and the complete checkpoint |
 | Public container workflow | Builds and publishes versioned GHCR images with provenance | A successful GitHub-hosted runner |
 
